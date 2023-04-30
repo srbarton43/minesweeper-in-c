@@ -6,4 +6,4 @@ all:
 
 clean:
 	rm -f *~
-	make -C clean src
+	make -C src clean

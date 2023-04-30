@@ -23,4 +23,5 @@ Icon?
 .Trashes
 
 ###########################################################################
-minesweeper.c
+minesweeper.o
+minesweeper
