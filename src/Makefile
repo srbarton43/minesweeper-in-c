@@ -1,7 +1,7 @@
 # Makefile for the crawler program
 #
 # David Kotz - April 2017, 2019, 2021
-OBJS = minesweeper.o
+OBJS = minesweeper.o board.o
 
 C = 
 L = 
@@ -25,6 +25,7 @@ minesweeper: $(OBJS) $(LLIBS)
 	$(CC) $(CFLAGS) $(OBJS) $(LLIBS) -o $@
 
 # object files depend on include files
+board.o: board.h
 
 test:
 	./testing.sh
