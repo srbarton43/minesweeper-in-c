@@ -18,16 +18,20 @@ ARGS =
 
 .PHONY: all clean test valgrind
 
-all: minesweeper
+all: minesweeper 
 
 # executable depends on object files
 minesweeper: $(OBJS) $(LLIBS)
 	$(CC) $(CFLAGS) $(OBJS) $(LLIBS) -o $@
 
+debug: board.c minesweeper.o
+	$(CC) $(CFLAGS) -DDEBUG minesweeper.o board.c $(LLIBS) -o minesweeper
+
 # object files depend on include files
 board.o: board.h
 
 test:
+	make debug
 	./testing.sh
 
 valgrind:
@@ -35,5 +39,6 @@ valgrind:
 
 clean:
 	rm -f minesweeper
+	rm -f debug
 	rm -f *~ *.o
 	rm -rf *.dSYM
