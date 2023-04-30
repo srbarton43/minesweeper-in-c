@@ -19,29 +19,46 @@ typedef struct board {
 
 /*         board_create        */
 board_t*
-board_new (const int r, const int c, const int numMines) {
+board_new (const int rows, const int cols, const int numMines) {
   board_t* b = malloc(sizeof(board_t));
-  b->r=r;
-  b->c=c;
+  b->r=rows;
+  b->c=cols;
   b->minesLeft=numMines;
-  b->visible = malloc(r*sizeof(char*));
-  b->hidden = malloc(r*sizeof(char*));
-  for (int i = 0; i < r; i++) {
-    b->visible[i] = malloc(c*sizeof(char));
-    b->hidden[i] = malloc(c*sizeof(char));
-    b->visible[i][c] = '\0';
-    b->hidden[i][c] = '\0';
+  b->visible = malloc(rows*sizeof(char*));
+  b->hidden = malloc(rows*sizeof(char*));
+  for (int i = 0; i < rows; i++) {
+    b->visible[i] = malloc(cols*sizeof(char));
+    b->hidden[i] = malloc(cols*sizeof(char));
   }
-
-  // fill with a's
-  for (int i = 0; i < r; i++) {
-    for (int j = 0; j < c; j++) {
-      b->visible[i][j] = 'a';
-      b->hidden[i][j] = 'a';
+  // generate mine indices
+  srand(time(0));
+  int indices[numMines];
+  for (int i = 0; i < numMines;) {
+    int index = (rand() % (rows*cols)) + 1;
+    for (int j = i; j >= 0; j--) {
+      if (indices[j] == index-1) { // already mine on index
+        goto skipped;
+      }
+    }
+    indices[i] = index-1;
+    i++;
+    skipped:;
+  }
+  
+  // plant mines
+  int i = 0;
+  int x = 0;
+  for (int r = 0; r < rows; r++) {
+    for (int c = 0; c < cols; c++) {
+      for (int j = 0; j < numMines; j++) {
+        if (indices[j] == i) {
+          b->hidden[r][c] = 'x';
+          x++;
+        }
+      }
+      i++;
     }
   }
-  /* mine distribution algo */
-
   return b;
 }
 
@@ -65,6 +82,9 @@ void board_print (board_t* board) {
   }
   int rows = board->r;
   int cols = board->c;
+  #ifdef DEBUG
+  printf("*******     visible      *******\n");
+  #endif
   for (int r = 0; r < rows; r++) {
     for (int c = 0; c < cols; c++) {
       if (board->visible[r][c] == '\0') {
@@ -75,6 +95,19 @@ void board_print (board_t* board) {
     }
     printf("\n");
   }
+#ifdef DEBUG
+  printf("******     hidden        *******\n");
+  for (int r = 0; r < rows; r++) {
+    for (int c = 0; c < cols; c++) {
+      if (board->hidden[r][c] == '\0') {
+        printf("[0]\t");
+      } else {
+        printf("[%c]\t",board->hidden[r][c]);
+      }
+    }
+    printf("\n");
+  }
+#endif
 }
 
 /*       board_delete      */

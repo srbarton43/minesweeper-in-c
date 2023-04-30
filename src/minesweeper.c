@@ -9,7 +9,7 @@
 
 int
 main (int argc, char** argv) {
-  board_t* board = board_new(4, 5, 2);
+  board_t* board = board_new(3, 3, 6);
   board_print(board);
   board_delete(board);
   return 0;
