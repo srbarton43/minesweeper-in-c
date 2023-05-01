@@ -8,6 +8,7 @@
 #include "board.h"
 
 static void parseArgs(const int argc, char* argv[], int* rows, int* cols, int *numMines);
+static int gameLoop(board_t* board);
 
 int
 main (int argc, char* argv[]) {
@@ -20,6 +21,7 @@ main (int argc, char* argv[]) {
     board =  board_new(cols, rows, .15*cols*rows);
   }
   board_print(board);
+  gameLoop(board);
   board_delete(board);
   return 0;
 }
@@ -39,4 +41,23 @@ parseArgs (const int argc, char* argv[], int* rows, int* cols, int* numMines) {
     printf("usage: nRows nCols [nMines]\n");
     exit(2);
   }
+}
+
+static int
+gameLoop(board_t* board) {
+  while (1) {
+    printf("Action? ");
+    fflush(stdout);
+    int r = -1, c = -1;
+    char ch = '\0';
+    scanf("%c %d %d", &ch, &r, &c);
+    if (ch == 'f') {
+      board_flag(board, r, c);
+    } else if (ch == 'c') {
+      board_click(board, r, c);
+    } else if (ch == 'q') {
+      return 0;
+    }
+  }
+  return 1;
 }

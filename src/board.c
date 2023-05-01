@@ -9,6 +9,7 @@
 
 #include "board.h"
 #include <time.h>
+#include <ncurses.h>
 
 typedef struct board {
   int r,c;
@@ -51,7 +52,7 @@ board_new (const int rows, const int cols, const int numMines) {
   
   // plant mines
   for (int i = 0; i < numMines; i++) {
-    b->hidden[(indices[i])/cols][-1*(indices[i]/cols)*cols+indices[i]] = 'x';
+    b->hidden[(indices[i])/cols][-1*(indices[i]/cols)*cols+indices[i]] = 'X';
   }
   writeBoard(b);
   return b;
@@ -64,7 +65,7 @@ void board_click (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
     printf("row %d, col %d is not within the board boundaries\n", r, c);
-  } else if (board->hidden[r][c] == 'x') {
+  } else if (board->hidden[r][c] == 'X') {
     printf("Game Over\n");
     exit(0);
   } else {
@@ -80,10 +81,10 @@ static void
 writeBoard(board_t* board) {
   for (int r = 0; r < board->r; r++) {
     for (int c = 0; c < board->c; c++) {
-      if (board->hidden[r][c] != 'x') {
+      if (board->hidden[r][c] != 'X') {
         board->hidden[r][c] = getNeighbors(board, r, c);
-        printf("char: %d\n",board->hidden[r][c]);
       }
+      board->visible[r][c] = '_';
     }
   }
 }
@@ -101,7 +102,7 @@ getNeighbors(board_t* board, int r, int c) {
     for (int j = c-1; j <= c+1; j++) {
       if (j < 0 || j >= board->c || (i==r && j==c)) {
         continue;
-      } else if (board->hidden[i][j] == 'x') {
+      } else if (board->hidden[i][j] == 'X') {
         count++;
       }
     }
@@ -117,10 +118,10 @@ void board_flag (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
     printf("row %d, col %d is not within the board boundaries\n", r, c);
-  } else if (board->visible[r][c] == '_') {
+  } else if (board->visible[r][c] <= 9) {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
-    board->visible[r][c] = '\0';
+    board->visible[r][c] = '_';
   } else {
     board->visible[r][c] = 'f';
   }
@@ -137,23 +138,31 @@ void board_print (board_t* board) {
   #ifdef DEBUG
   printf("*******     visible      *******\n");
   #endif
+  printf("xx  ");
+  for (int j = 0; j < cols; j++) {
+    printf(" %d  ",j);
+  }
+  printf("\n");
   for (int r = 0; r < rows; r++) {
+    printf("%02d  ",r);
     for (int c = 0; c < cols; c++) {
-      if (board->visible[r][c] == '\0') {
-        printf("[_] ");
+      if (board->visible[r][c] > 9) {
+        printf("[%c] ",board->visible[r][c]);
       } else {
-        if (board->visible[r][c] > 9) {
-          printf("[%c] ",board->visible[r][c]);
-        } else {
-          printf("[%d] ",board->visible[r][c]);
-        }
+        printf("[%d] ",board->visible[r][c]);
       }
     }
     printf("\n");
   }
 #ifdef DEBUG
   printf("******     hidden        *******\n");
+  printf("xx  ");
+  for (int j = 0; j < cols; j++) {
+    printf(" %d  ",j);
+  }
+  printf("\n");
   for (int r = 0; r < rows; r++) {
+    printf("%02d  ",r);
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
       if (ch > 9) {
@@ -187,7 +196,7 @@ board_delete (board_t* board) {
 #ifdef UNIT_TEST
 
 int main (int argc, char* argv[]) {
-  board_t* board = board_new(4, 5, 5);
+  board_t* board = board_new(12, 20, .15*240);
   board_click(board, 1, 1);
   board_click(board ,2,2);
   board_flag(board, 2, 3);
