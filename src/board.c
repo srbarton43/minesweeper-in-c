@@ -72,6 +72,7 @@ updateBoard(board_t* board) {
     for (int c = 0; c < board->c; c++) {
       if (board->hidden[r][c] != 'x') {
         board->hidden[r][c] = getNeighbors(board, r, c);
+        printf("char: %d\n",board->hidden[r][c]);
       }
     }
   }
@@ -95,7 +96,8 @@ getNeighbors(board_t* board, int r, int c) {
       }
     }
   }
-  return (char) count;
+  printf("neighbors@%d,%d: %d\n",r, c,count);
+  return count;
 }
 
 /*     board_flag      */
@@ -128,9 +130,9 @@ void board_print (board_t* board) {
   for (int r = 0; r < rows; r++) {
     for (int c = 0; c < cols; c++) {
       if (board->visible[r][c] == '\0') {
-        printf("[ ]\t");
+        printf("[_] ");
       } else {
-        printf("[%c]\t",board->visible[r][c]);
+        printf("[%c] ",board->visible[r][c]);
       }
     }
     printf("\n");
@@ -139,10 +141,13 @@ void board_print (board_t* board) {
   printf("******     hidden        *******\n");
   for (int r = 0; r < rows; r++) {
     for (int c = 0; c < cols; c++) {
-      if (board->hidden[r][c] == '\0') {
-        printf("[0]\t");
+      int ch = board->hidden[r][c];
+      if (ch > 9) {
+        printf("[%c] ",ch);
+      // } else if (ch == 0) {
+      //   printf("[ ] ");
       } else {
-        printf("[%c]\t",board->hidden[r][c]);
+        printf("[%d] ",ch);
       }
     }
     printf("\n");
