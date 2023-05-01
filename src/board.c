@@ -17,6 +17,8 @@ typedef struct board {
   char** hidden;
 } board_t;
 
+static void updateBoard(board_t* board);
+static char getNeighbors(board_t* board, const int r, const int c);
 /*         board_create        */
 board_t*
 board_new (const int rows, const int cols, const int numMines) {
@@ -59,6 +61,9 @@ board_new (const int rows, const int cols, const int numMines) {
       i++;
     }
   }
+  board_print(b);
+  updateBoard(b);
+  board_print(b);
   return b;
 }
 
@@ -68,11 +73,45 @@ void board_click (board_t* board, const int r, const int c) {
   // click action:
 }
 
+/*
+* Updates the boards display and hidden values
+*/
+static void
+updateBoard(board_t* board) {
+  for (int r = 0; r < board->r; r++) {
+    for (int c = 0; c < board->c; c++) {
+      if (board->hidden[r][c] != 'x') {
+        board->hidden[r][c] = getNeighbors(board, r, c);
+      }
+    }
+  }
+}
+
+/*
+ * gets number of adjacent mines and returns char
+*/
+static char
+getNeighbors(board_t* board, int r, int c) {
+  int count = 0;
+  for (int i = r-1; i <= r+1; i++) {
+    if (i < 0 || i >= board->r) {
+      continue;
+    }
+    for (int j = c-1; j <= c+1; j++) {
+      if (j < 0 || j >= board->c || (i==r && j==c)) {
+        continue;
+      } else if (board->hidden[i][j] == 'x') {
+        count++;
+      }
+    }
+  }
+  return (char) count;
+}
 
 /*     board_flag      */
 void board_flag (board_t* board, const int r, const int c) {
   #ifdef DEBUG
-    printf ("Flagging square (%d,%d)\n", r, c);
+    printf ("Flagging square (%d,%d)   *****************************\n", r, c);
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
     printf("row %d, col %d is not within the board boundaries\n", r, c);
@@ -99,7 +138,7 @@ void board_print (board_t* board) {
   for (int r = 0; r < rows; r++) {
     for (int c = 0; c < cols; c++) {
       if (board->visible[r][c] == '\0') {
-        printf("[0]\t");
+        printf("[ ]\t");
       } else {
         printf("[%c]\t",board->visible[r][c]);
       }
