@@ -17,7 +17,7 @@ typedef struct board {
   char** hidden;
 } board_t;
 
-static void updateBoard(board_t* board);
+static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
 
 
@@ -53,21 +53,31 @@ board_new (const int rows, const int cols, const int numMines) {
   for (int i = 0; i < numMines; i++) {
     b->hidden[(indices[i])/cols][-1*(indices[i]/cols)*cols+indices[i]] = 'x';
   }
-  updateBoard(b);
+  writeBoard(b);
   return b;
 }
 
 /*       board_click      */
 void board_click (board_t* board, const int r, const int c) {
-  // TODO
-  // click action:
+  #ifdef DEBUG
+  printf("Clicking board at (%d,%d) ***********************\n",r,c);
+  #endif
+  if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
+    printf("row %d, col %d is not within the board boundaries\n", r, c);
+  } else if (board->hidden[r][c] == 'x') {
+    printf("Game Over\n");
+    exit(0);
+  } else {
+    board->visible[r][c] = board->hidden[r][c];
+    board_print(board);
+  }
 }
 
 /*
 * Updates the boards display and hidden values
 */
 static void
-updateBoard(board_t* board) {
+writeBoard(board_t* board) {
   for (int r = 0; r < board->r; r++) {
     for (int c = 0; c < board->c; c++) {
       if (board->hidden[r][c] != 'x') {
@@ -132,7 +142,11 @@ void board_print (board_t* board) {
       if (board->visible[r][c] == '\0') {
         printf("[_] ");
       } else {
-        printf("[%c] ",board->visible[r][c]);
+        if (board->visible[r][c] > 9) {
+          printf("[%c] ",board->visible[r][c]);
+        } else {
+          printf("[%d] ",board->visible[r][c]);
+        }
       }
     }
     printf("\n");
@@ -174,6 +188,8 @@ board_delete (board_t* board) {
 
 int main (int argc, char* argv[]) {
   board_t* board = board_new(4, 5, 5);
+  board_click(board, 1, 1);
+  board_click(board ,2,2);
   board_flag(board, 2, 3);
   board_flag(board, 3, 4);
   board_flag(board, 10, 3);
