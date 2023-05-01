@@ -71,8 +71,19 @@ void board_click (board_t* board, const int r, const int c) {
 
 /*     board_flag      */
 void board_flag (board_t* board, const int r, const int c) {
-  // TODO
-  // flag action
+  #ifdef DEBUG
+    printf ("Flagging square (%d,%d)\n", r, c);
+  #endif
+  if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
+    printf("row %d, col %d is not within the board boundaries\n", r, c);
+  } else if (board->visible[r][c] == '_') {
+    printf("Cannot flag an empty square\n");
+  } else if (board->visible[r][c] == 'f') {
+    board->visible[r][c] = '\0';
+  } else {
+    board->visible[r][c] = 'f';
+  }
+  board_print(board);
 }
 
 /*    board_print     */
