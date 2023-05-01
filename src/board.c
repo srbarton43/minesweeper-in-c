@@ -19,6 +19,8 @@ typedef struct board {
 
 static void updateBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
+
+
 /*         board_create        */
 board_t*
 board_new (const int rows, const int cols, const int numMines) {
@@ -48,22 +50,10 @@ board_new (const int rows, const int cols, const int numMines) {
   }
   
   // plant mines
-  int i = 0;
-  int x = 0;
-  for (int r = 0; r < rows; r++) {
-    for (int c = 0; c < cols; c++) {
-      for (int j = 0; j < numMines; j++) {
-        if (indices[j] == i) {
-          b->hidden[r][c] = 'x';
-          x++;
-        }
-      }
-      i++;
-    }
+  for (int i = 0; i < numMines; i++) {
+    b->hidden[(indices[i])/cols][-1*(indices[i]/cols)*cols+indices[i]] = 'x';
   }
-  board_print(b);
   updateBoard(b);
-  board_print(b);
   return b;
 }
 
