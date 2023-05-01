@@ -20,6 +20,8 @@ typedef struct board {
 
 static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
+static void zerosLogic(board_t* board, const int r, const int c);
+static int touchingZero(board_t* board, const int r, const int c);
 
 
 /*         board_create        */
@@ -68,14 +70,53 @@ void board_click (board_t* board, const int r, const int c) {
   } else if (board->hidden[r][c] == 'X') {
     printf("Game Over\n");
     exit(0);
+  } else if (board->hidden[r][c] == 0) {
+      zerosLogic(board, r,c);
   } else {
     board->visible[r][c] = board->hidden[r][c];
     board_print(board);
   }
 }
 
+static void
+zerosLogic(board_t* board, const int r, const int c) {
+  if (board->hidden[r][c] == 0 || touchingZero(board, r, c)) {
+    board->visible[r][c] = board->hidden[r][c];
+    board_print(board);
+    for (int i = r-1; i <= r+1; i++) {
+      if(i<0||i>=board->r) {
+        continue;
+      }
+      for(int j = c-1; j<=c+1; j++){
+        if (j<0||j>=board->c||(i==r&&j==c)) {
+          continue;
+        }
+        if (board->visible[i][j] == '_') {
+          zerosLogic(board, i, j);
+        }
+      }
+    }
+  }
+}
+
+static int
+touchingZero(board_t* board, const int r, const int c) {
+  for (int i = r-1; i <= r+1; i++) {
+    if (i < 0 || i >= board->r) {
+      continue;
+    }
+    for (int j = c-1; j <= c+1; j++) {
+      if (j < 0 || j >= board->c || (i==r && j==c)) {
+        continue;
+      } else if (board->hidden[i][j] == 0) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
 /*
-* Updates the boards display and hidden values
+* Writes the boards hidden values
 */
 static void
 writeBoard(board_t* board) {
