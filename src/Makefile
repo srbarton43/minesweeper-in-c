@@ -16,7 +16,7 @@ VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 
 ARGS = 
 
-.PHONY: all clean test valgrind
+.PHONY: all clean test valgrind debug unittest
 
 all: minesweeper 
 
@@ -27,6 +27,8 @@ minesweeper: $(OBJS) $(LLIBS)
 debug: board.c minesweeper.o
 	$(CC) $(CFLAGS) -DDEBUG minesweeper.o board.c $(LLIBS) -o minesweeper
 
+unittest: board.c
+	$(CC) $(CFLAGS) -DDEBUG -DUNIT_TEST board.c -o $@
 # object files depend on include files
 board.o: board.h
 
@@ -39,6 +41,6 @@ valgrind:
 
 clean:
 	rm -f minesweeper
-	rm -f debug
+	rm -f unittest
 	rm -f *~ *.o
 	rm -rf *.dSYM

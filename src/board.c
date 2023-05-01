@@ -135,3 +135,15 @@ board_delete (board_t* board) {
   free(board->hidden);
   free(board);
 }
+
+#ifdef UNIT_TEST
+
+int main (int argc, char* argv[]) {
+  board_t* board = board_new(4, 5, 5);
+  board_flag(board, 2, 3);
+  board_flag(board, 3, 4);
+  board_flag(board, 10, 3);
+  board_flag(board, 2, 3);
+  board_delete(board);
+}
+#endif
