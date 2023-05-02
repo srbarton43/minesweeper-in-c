@@ -64,6 +64,16 @@ void board_click(board_t* board, const int r, const int c);
 void board_flag(board_t* board, const int r, const int c);
 
 /*
+ * boardWon
+ * 
+ * Checks if user has won
+ * 
+ * Returns:
+ *  1 if won
+ *  0 if not
+ */
+int boardWon(board_t* board);
+/*
  * board_print
  *
  * print visible board to stdout

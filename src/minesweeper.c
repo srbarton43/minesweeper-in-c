@@ -46,17 +46,23 @@ parseArgs (const int argc, char* argv[], int* rows, int* cols, int* numMines) {
 static int
 gameLoop(board_t* board) {
   while (1) {
+    if(boardWon(board) == 1) {
+      printf("You Won!\n");
+      return 0;
+    }
     printf("Action? ");
     fflush(stdout);
     int r = -1, c = -1;
     char ch = '\0';
     scanf("%c %d %d", &ch, &r, &c);
+    printf("\n");
     if (ch == 'f') {
       board_flag(board, r, c);
     } else if (ch == 'c') {
       board_click(board, r, c);
     } else if (ch == 'q') {
-      return 0;
+      board_delete(board);
+      exit(0);
     }
   }
   return 1;

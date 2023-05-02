@@ -13,7 +13,7 @@
 
 typedef struct board {
   int r,c;
-  int minesLeft;
+  int minesLeft,squaresLeft;
   char** visible;
   char** hidden;
 } board_t;
@@ -31,6 +31,7 @@ board_new (const int rows, const int cols, const int numMines) {
   b->r=rows;
   b->c=cols;
   b->minesLeft=numMines;
+  b->squaresLeft=rows*cols-numMines;
   b->visible = malloc(rows*sizeof(char*));
   b->hidden = malloc(rows*sizeof(char*));
   for (int i = 0; i < rows; i++) {
@@ -72,8 +73,10 @@ void board_click (board_t* board, const int r, const int c) {
     exit(0);
   } else if (board->hidden[r][c] == 0) {
       zerosLogic(board, r,c);
+      board_print(board);
   } else {
     board->visible[r][c] = board->hidden[r][c];
+    board->squaresLeft--;
     board_print(board);
   }
 }
@@ -82,7 +85,7 @@ static void
 zerosLogic(board_t* board, const int r, const int c) {
   if (board->hidden[r][c] == 0 || touchingZero(board, r, c)) {
     board->visible[r][c] = board->hidden[r][c];
-    board_print(board);
+    board->squaresLeft--;
     for (int i = r-1; i <= r+1; i++) {
       if(i<0||i>=board->r) {
         continue;
@@ -148,7 +151,6 @@ getNeighbors(board_t* board, int r, int c) {
       }
     }
   }
-  printf("neighbors@%d,%d: %d\n",r, c,count);
   return count;
 }
 
@@ -163,12 +165,22 @@ void board_flag (board_t* board, const int r, const int c) {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
     board->visible[r][c] = '_';
+    board->minesLeft--;
   } else {
     board->visible[r][c] = 'f';
+    board->minesLeft++;
   }
   board_print(board);
 }
 
+int
+boardWon(board_t* board) {
+  if (board->squaresLeft == 0) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 /*    board_print     */
 void board_print (board_t* board) {
   if (board == NULL) {
@@ -179,7 +191,7 @@ void board_print (board_t* board) {
   #ifdef DEBUG
   printf("*******     visible      *******\n");
   #endif
-  printf("xx  ");
+  printf("\nxx  ");
   for (int j = 0; j < cols; j++) {
     printf(" %d  ",j);
   }
