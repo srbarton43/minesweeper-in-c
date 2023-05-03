@@ -67,9 +67,9 @@ void board_click (board_t* board, const int r, const int c) {
   printf("Clicking board at (%d,%d) ***********************\n",r,c);
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
-    printf("row %d, col %d is not within the board boundaries\n", r, c);
+    printf("row %c, col %d is not within the board boundaries\n", (char)(97+r), c);
   } else if (board->visible[r][c] != '_') {
-    printf("Cannot click at (%d,%d)!\n",r,c);
+    printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
   } else if (board->hidden[r][c] == 'X') {
     printf("Game Over\n");
     exit(0);
@@ -162,7 +162,7 @@ void board_flag (board_t* board, const int r, const int c) {
     printf ("Flagging square (%d,%d)   *****************************\n", r, c);
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
-    printf("row %d, col %d is not within the board boundaries\n", r, c);
+    printf("row %c, col %d is not within the board boundaries\n", (char)(r+97), c);
   } else if (board->visible[r][c] <= 9) {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
@@ -183,6 +183,7 @@ boardWon(board_t* board) {
     return 0;
   }
 }
+
 /*    board_print     */
 void board_print (board_t* board) {
   if (board == NULL) {
@@ -193,13 +194,13 @@ void board_print (board_t* board) {
   #ifdef DEBUG
   printf("*******     visible      *******\n");
   #endif
-  printf("\nxx  ");
+  printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %d  ",j);
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {
-    printf("%02d  ",r);
+    printf("%c  ",(char)(r+97));
     for (int c = 0; c < cols; c++) {
       if (board->visible[r][c] > 9) {
         printf("[%c] ",board->visible[r][c]);
@@ -211,13 +212,13 @@ void board_print (board_t* board) {
   }
 #ifdef DEBUG
   printf("******     hidden        *******\n");
-  printf("xx  ");
+  printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %d  ",j);
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {
-    printf("%02d  ",r);
+    printf("%c  ",(char)(r+97));
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
       if (ch > 9) {

@@ -50,16 +50,16 @@ gameLoop(board_t* board) {
       printf("You Won!\n");
       return 0;
     }
-    printf("Action? ");
-    fflush(stdout);
-    int r = -1, c = -1;
-    char ch = '\0';
-    scanf("%c %d %d", &ch, &r, &c);
-    printf("\n");
+    printf("\nAction? ");
+    int c = -1;
+    char r='\0', ch = '\0';
+    if(scanf(" %c",&ch)!=1) {printf("error\n");continue;};
     if (ch == 'f') {
-      board_flag(board, r, c);
+      scanf(" %c%d",&r,&c);
+      board_flag(board, r-97, c);
     } else if (ch == 'c') {
-      board_click(board, r, c);
+      scanf(" %c%d",&r,&c);
+      board_click(board, r-97, c);
     } else if (ch == 'q') {
       board_delete(board);
       exit(0);
