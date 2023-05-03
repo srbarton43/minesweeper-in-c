@@ -68,6 +68,8 @@ void board_click (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
     printf("row %d, col %d is not within the board boundaries\n", r, c);
+  } else if (board->visible[r][c] != '_') {
+    printf("Cannot click at (%d,%d)!\n",r,c);
   } else if (board->hidden[r][c] == 'X') {
     printf("Game Over\n");
     exit(0);
