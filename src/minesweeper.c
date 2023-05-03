@@ -18,7 +18,7 @@ main (int argc, char* argv[]) {
   if (numMines != 0) {
     board = board_new(rows, cols, numMines);
   } else {
-    board =  board_new(cols, rows, .15*cols*rows);
+    board =  board_new(rows, cols, .15*cols*rows);
   }
   board_print(board);
   gameLoop(board);
