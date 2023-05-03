@@ -71,6 +71,7 @@ void board_click (board_t* board, const int r, const int c) {
   } else if (board->visible[r][c] != '_') {
     printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
   } else if (board->hidden[r][c] == 'X') {
+    board_print(board);
     printf("Game Over\n");
     exit(0);
   } else if (board->hidden[r][c] == 0) {
