@@ -63,7 +63,8 @@ board_new (const int rows, const int cols, const int numMines) {
 }
 
 /*       board_click      */
-void board_click (board_t* board, const int r, const int c) {
+void 
+board_click (board_t* board, const int r, const int c) {
   #ifdef DEBUG
   printf("Clicking board at (%d,%d) ***********************\n",r,c);
   #endif
@@ -73,8 +74,13 @@ void board_click (board_t* board, const int r, const int c) {
     printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
   } else if (board->hidden[r][c] == 'X') {
     board->hidden[r][c]='#';
+    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
     printHidden(board);
-    printf("Game Over\n");
+    printf("\n%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n"); 
     exit(0);
   } else if (board->hidden[r][c] == 0) {
       zerosLogic(board, r,c);
@@ -86,6 +92,7 @@ void board_click (board_t* board, const int r, const int c) {
   }
 }
 
+// recursive check to clear zero-neighboring tiles
 static void
 zerosLogic(board_t* board, const int r, const int c) {
   if (board->hidden[r][c] == 0 || touchingZero(board, r, c)) {
@@ -107,6 +114,7 @@ zerosLogic(board_t* board, const int r, const int c) {
   }
 }
 
+// check if tile is neighboring zero tile
 static int
 touchingZero(board_t* board, const int r, const int c) {
   for (int i = r-1; i <= r+1; i++) {
@@ -198,7 +206,7 @@ void board_print (board_t* board) {
   #ifdef DEBUG
   printf("*******     visible      *******\n");
   #endif
-  printf("%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
+  printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);
@@ -230,6 +238,7 @@ printHidden(board_t* board) {
   }
   int rows = board->r;
   int cols = board->c;
+  printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);

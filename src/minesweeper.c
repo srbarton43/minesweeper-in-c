@@ -35,7 +35,7 @@ parseArgs (const int argc, char* argv[], int* difficulty) {
     exit(1);
   }
   *difficulty = atoi(argv[1]);
-  if (*difficulty == 0) {
+  if (*difficulty <= 0||*difficulty>3) {
     printf("usage: %s difficulty=1,2,3\n",argv[0]);
     exit(1);
   } 
@@ -48,7 +48,7 @@ gameLoop(board_t* board) {
       printf("You Won!\n");
       return 0;
     }
-    printf("\nAction? ");
+    printf("\nAction (mode c/f + coord)... ");
     int c = -1;
     char r='\0', ch = '\0';
     if(scanf(" %c",&ch)!=1) {printf("error\n");continue;};
