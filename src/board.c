@@ -22,6 +22,7 @@ static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
 static void zerosLogic(board_t* board, const int r, const int c);
 static int touchingZero(board_t* board, const int r, const int c);
+static void printHidden(board_t* board);
 
 
 /*         board_create        */
@@ -71,7 +72,7 @@ void board_click (board_t* board, const int r, const int c) {
   } else if (board->visible[r][c] != '_') {
     printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
   } else if (board->hidden[r][c] == 'X') {
-    board_print(board);
+    printHidden(board);
     printf("Game Over\n");
     exit(0);
   } else if (board->hidden[r][c] == 0) {
@@ -171,7 +172,7 @@ void board_flag (board_t* board, const int r, const int c) {
     board->minesLeft--;
   } else {
     board->visible[r][c] = 'f';
-    board->minesLeft++;
+    board->minesLeft--;
   }
   board_print(board);
 }
@@ -195,6 +196,7 @@ void board_print (board_t* board) {
   #ifdef DEBUG
   printf("*******     visible      *******\n");
   #endif
+  printf("%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);
@@ -212,7 +214,20 @@ void board_print (board_t* board) {
     printf("\n");
   }
 #ifdef DEBUG
+  printHidden(board)
+#endif
+}
+
+static void
+printHidden(board_t* board) {
+  #ifdef DEBUG
   printf("******     hidden        *******\n");
+  #endif
+  if (board == NULL) {
+    printf("invalid board");
+  }
+  int rows = board->r;
+  int cols = board->c;
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);
@@ -232,7 +247,6 @@ void board_print (board_t* board) {
     }
     printf("\n");
   }
-#endif
 }
 
 /*       board_delete      */
