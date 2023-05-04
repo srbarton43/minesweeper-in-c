@@ -180,6 +180,7 @@ void board_flag (board_t* board, const int r, const int c) {
 int
 boardWon(board_t* board) {
   if (board->squaresLeft == 0) {
+    printHidden(board);
     return 1;
   } else {
     return 0;
