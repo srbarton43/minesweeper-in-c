@@ -197,7 +197,7 @@ void board_print (board_t* board) {
   #endif
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
-    printf(" %d  ",j);
+    printf(" %02d ",j);
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {
@@ -215,7 +215,7 @@ void board_print (board_t* board) {
   printf("******     hidden        *******\n");
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
-    printf(" %d  ",j);
+    printf(" %02d ",j);
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {

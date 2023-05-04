@@ -7,18 +7,20 @@
 #include <stdlib.h>
 #include "board.h"
 
-static void parseArgs(const int argc, char* argv[], int* rows, int* cols, int *numMines);
+static void parseArgs(const int argc, char* argv[], int* difficulty);
 static int gameLoop(board_t* board);
 
 int
 main (int argc, char* argv[]) {
-  int rows = 0, cols = 0, numMines = 0;
-  parseArgs(argc, argv, &rows, &cols, &numMines);
+  int difficulty = 4;
+  parseArgs(argc, argv, &difficulty);
   board_t* board = NULL;
-  if (numMines != 0) {
-    board = board_new(rows, cols, numMines);
-  } else {
-    board =  board_new(rows, cols, .15*cols*rows);
+  if (difficulty == BEGINNER) {
+    board = board_new(9, 9, 10);
+  } else if (difficulty == INTERMEDIATE) {
+    board = board_new(16, 16, 40);
+  } else if (difficulty == EXPERT) {
+    board = board_new(16, 30, 99);
   }
   board_print(board);
   gameLoop(board);
@@ -27,20 +29,16 @@ main (int argc, char* argv[]) {
 }
 
 static void
-parseArgs (const int argc, char* argv[], int* rows, int* cols, int* numMines) {
-  if (argc != 3 && argc != 4) {
-    printf("usage: nRows nCols [nMines]\n");
+parseArgs (const int argc, char* argv[], int* difficulty) {
+  if (argc != 2) {
+    printf("usage: %s difficulty=1,2,3\n",argv[0]);
     exit(1);
   }
-  *rows = atoi(argv[1]);
-  *cols = atoi(argv[2]);
-  if (argc == 4) {
-    *numMines = atoi(argv[3]);
-  }
-  if (*rows == 0 || *cols == 0 || numMines == 0) {
-    printf("usage: nRows nCols [nMines]\n");
-    exit(2);
-  }
+  *difficulty = atoi(argv[1]);
+  if (*difficulty == 0) {
+    printf("usage: %s difficulty=1,2,3\n",argv[0]);
+    exit(1);
+  } 
 }
 
 static int

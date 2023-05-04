@@ -11,8 +11,9 @@
 #include <stdio.h>
 
 // board typedef
-
 typedef struct board board_t;
+
+enum DIFFICULTY{BEGINNER=1, INTERMEDIATE=2, EXPERT=3};
 
 /*
  * board_new
