@@ -9,7 +9,6 @@
 
 #include "board.h"
 #include <time.h>
-#include <ncurses.h>
 
 typedef struct board {
   int r,c;
@@ -23,6 +22,17 @@ static char getNeighbors(board_t* board, const int r, const int c);
 static void zerosLogic(board_t* board, const int r, const int c);
 static int touchingZero(board_t* board, const int r, const int c);
 static void printHidden(board_t* board);
+static void getColor(const int i);
+
+static void reset(){printf("\033[0;0m");}
+static void black(){printf("\033[0;30m");}
+static void red(){printf("\033[0;31m");}
+static void green(){printf("\033[0;32m");}
+static void yellow(){printf("\033[0;33m");}
+static void blue(){printf("\033[0;34m");}
+static void purple(){printf("\033[0;35m");}
+static void cyan(){printf("\033[0;36m");}
+static void white(){printf("\033[0;37m");}
 
 
 /*         board_create        */
@@ -70,17 +80,21 @@ board_click (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(97+r), c);
-  } else if (board->visible[r][c] != '_') {
+  } else if (board->visible[r][c] != '0') {
     printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
   } else if (board->hidden[r][c] == 'X') {
     board->hidden[r][c]='#';
+    red();
     printf("%*c",board->c*4/2-3,' ');printf("___________");
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
     printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    reset();
     printHidden(board);
+    red();
     printf("\n%*c",board->c*4/2-3,' ');printf("___________");
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
     printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n"); 
+    reset();
     exit(0);
   } else if (board->hidden[r][c] == 0) {
       zerosLogic(board, r,c);
@@ -96,7 +110,11 @@ board_click (board_t* board, const int r, const int c) {
 static void
 zerosLogic(board_t* board, const int r, const int c) {
   if (board->hidden[r][c] == 0 || touchingZero(board, r, c)) {
-    board->visible[r][c] = board->hidden[r][c];
+    if (board->hidden[r][c] == 0) {
+      board->visible[r][c] = '_';
+    } else {
+      board->visible[r][c] = board->hidden[r][c];
+    }
     board->squaresLeft--;
     for (int i = r-1; i <= r+1; i++) {
       if(i<0||i>=board->r) {
@@ -106,7 +124,7 @@ zerosLogic(board_t* board, const int r, const int c) {
         if (j<0||j>=board->c||(i==r&&j==c)) {
           continue;
         }
-        if (board->visible[i][j] == '_') {
+        if (board->visible[i][j] == '0') {
           zerosLogic(board, i, j);
         }
       }
@@ -141,7 +159,7 @@ writeBoard(board_t* board) {
       if (board->hidden[r][c] != 'X') {
         board->hidden[r][c] = getNeighbors(board, r, c);
       }
-      board->visible[r][c] = '_';
+      board->visible[r][c] = '0';
     }
   }
 }
@@ -215,10 +233,25 @@ void board_print (board_t* board) {
   for (int r = 0; r < rows; r++) {
     printf("%c  ",(char)(r+97));
     for (int c = 0; c < cols; c++) {
-      if (board->visible[r][c] > 9) {
-        printf("[%c] ",board->visible[r][c]);
+      char ch = board->visible[r][c];
+      if (ch == 'f') {
+        red();
+        printf("[");
+        yellow();
+        printf("%c",ch);
+        red();
+        printf("] ");
+        reset();
+      } else if (board->visible[r][c] == '_') {
+        printf(" _  ");
+      } else if (ch > 9) {
+        printf("[%c] ", ch);
       } else {
-        printf("[%d] ",board->visible[r][c]);
+        getColor(ch);
+        printf("[");
+        printf("%d",ch);
+        printf("] ");
+        reset();
       }
     }
     printf("\n");
@@ -226,6 +259,27 @@ void board_print (board_t* board) {
 #ifdef DEBUG
   printHidden(board);
 #endif
+}
+
+static void 
+getColor(const int i) {
+  switch(i) {
+    case 0:
+      reset();
+      break;
+    case 1:
+      cyan();
+      break;
+    case 2:
+      green();
+      break;
+    case 3:
+      purple();
+      break;
+    case 4:
+      blue();
+      break;
+  }
 }
 
 static void
@@ -248,12 +302,30 @@ printHidden(board_t* board) {
     printf("%c  ",(char)(r+97));
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
-      if (ch > 9) {
-        printf("[%c] ",ch);
+      if (ch == 'X') {
+        yellow();
+        printf("[");
+        red();
+        printf("%c",ch);
+        yellow();
+        printf("] ");
+        reset();
       // } else if (ch == 0) {
       //   printf("[ ] ");
+      } else if (ch == '#') {
+        red();
+        printf("[");
+        yellow();
+        printf("#");
+        red();
+        printf("] ");
+        reset();
+      } else if (ch == 0) {
+        printf(" _  ");
       } else {
+        getColor(ch);
         printf("[%d] ",ch);
+        reset();
       }
     }
     printf("\n");
