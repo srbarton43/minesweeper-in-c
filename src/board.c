@@ -89,7 +89,7 @@ board_click (board_t* board, const int r, const int c) {
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
     printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
     reset();
-    printHidden(board);
+    printHidden(board,0);
     red();
     printf("\n%*c",board->c*4/2-3,' ');printf("___________");
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
@@ -192,10 +192,10 @@ void board_flag (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(r+97), c);
-  } else if (board->visible[r][c] <= 9) {
+  } else if (board->visible[r][c] <= 9 || board->visible[r][c] == '_') {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
-    board->visible[r][c] = '_';
+    board->visible[r][c] = '0';
     board->minesLeft--;
   } else {
     board->visible[r][c] = 'f';
@@ -207,7 +207,17 @@ void board_flag (board_t* board, const int r, const int c) {
 int
 boardWon(board_t* board) {
   if (board->squaresLeft == 0) {
-    printHidden(board);
+    green();
+    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    reset();
+    printHidden(board,1);
+    green();
+    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    reset();
     return 1;
   } else {
     return 0;
@@ -257,7 +267,7 @@ void board_print (board_t* board) {
     printf("\n");
   }
 #ifdef DEBUG
-  printHidden(board);
+  printHidden(board,0);
 #endif
 }
 
@@ -279,11 +289,20 @@ getColor(const int i) {
     case 4:
       blue();
       break;
+    case 5:
+      blue();
+      break;   
+    case 6:
+      blue();
+      break;
+    case 7:
+      blue();
+      break;
   }
 }
 
 static void
-printHidden(board_t* board) {
+printHidden(board_t* board, const int status) {
   #ifdef DEBUG
   printf("******     hidden        *******\n");
   #endif
@@ -292,7 +311,11 @@ printHidden(board_t* board) {
   }
   int rows = board->r;
   int cols = board->c;
-  printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
+  if (status == 1) {
+    printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ',0);
+  } else {
+    printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
+  }
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);
@@ -303,13 +326,23 @@ printHidden(board_t* board) {
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
       if (ch == 'X') {
-        yellow();
-        printf("[");
-        red();
-        printf("%c",ch);
-        yellow();
-        printf("] ");
-        reset();
+        if (status == 0) {
+          yellow();
+          printf("[");
+          red();
+          printf("%c",ch);
+          yellow();
+          printf("] ");
+          reset();
+        } else {
+          red();
+          printf("[");
+          yellow();
+          printf("f");
+          red();
+          printf("] ");
+          reset();
+        }
       // } else if (ch == 0) {
       //   printf("[ ] ");
       } else if (ch == '#') {
