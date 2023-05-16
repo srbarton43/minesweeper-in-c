@@ -17,22 +17,22 @@ typedef struct board {
   char** hidden;
 } board_t;
 
+/*      static function prototypes             */
 static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
 static void zerosLogic(board_t* board, const int r, const int c);
 static int touchingZero(board_t* board, const int r, const int c);
-static void printHidden(board_t* board);
+static void printHidden(board_t* board, const int status);
 static void getColor(const int i);
 
-static void reset(){printf("\033[0;0m");}
-static void black(){printf("\033[0;30m");}
-static void red(){printf("\033[0;31m");}
-static void green(){printf("\033[0;32m");}
-static void yellow(){printf("\033[0;33m");}
-static void blue(){printf("\033[0;34m");}
-static void purple(){printf("\033[0;35m");}
-static void cyan(){printf("\033[0;36m");}
-static void white(){printf("\033[0;37m");}
+/*    color prototypes     */
+static void reset(void);
+static void red(void);
+static void green(void);
+static void yellow(void);
+static void blue(void);
+static void purple(void);
+static void cyan(void);
 
 
 /*         board_create        */
@@ -379,6 +379,15 @@ board_delete (board_t* board) {
   free(board->hidden);
   free(board);
 }
+
+/*        color definitions            */
+static void reset(void){printf("\033[0;0m");}
+static void red(void){printf("\033[0;31m");}
+static void green(void){printf("\033[0;32m");}
+static void yellow(void){printf("\033[0;33m");}
+static void blue(void){printf("\033[0;34m");}
+static void purple(void){printf("\033[0;35m");}
+static void cyan(void){printf("\033[0;36m");}
 
 #ifdef UNIT_TEST
 
