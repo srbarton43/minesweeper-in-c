@@ -45,7 +45,6 @@ static int
 gameLoop(board_t* board) {
   while (1) {
     if(boardWon(board) == 1) {
-      printf("You Won!\n");
       return 0;
     }
     printf("\nAction (mode c/f + coord)... ");

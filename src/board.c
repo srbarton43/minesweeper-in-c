@@ -17,23 +17,22 @@ typedef struct board {
   char** hidden;
 } board_t;
 
+/*      static function prototypes             */
 static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
 static void zerosLogic(board_t* board, const int r, const int c);
 static int touchingZero(board_t* board, const int r, const int c);
-static void printHidden(board_t* board);
+static void printHidden(board_t* board, const int status);
 static void getColor(const int i);
 
-static void reset(){printf("\033[0;0m");}
-static void black(){printf("\033[0;30m");}
-static void red(){printf("\033[0;31m");}
-static void green(){printf("\033[0;32m");}
-static void yellow(){printf("\033[0;33m");}
-static void blue(){printf("\033[0;34m");}
-static void purple(){printf("\033[0;35m");}
-static void cyan(){printf("\033[0;36m");}
-static void white(){printf("\033[0;37m");}
-
+/*    color prototypes     */
+static void reset(void);
+static void red(void);
+static void green(void);
+static void yellow(void);
+static void blue(void);
+static void purple(void);
+static void cyan(void);
 
 /*         board_create        */
 board_t*
@@ -89,7 +88,7 @@ board_click (board_t* board, const int r, const int c) {
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
     printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
     reset();
-    printHidden(board);
+    printHidden(board,0);
     red();
     printf("\n%*c",board->c*4/2-3,' ');printf("___________");
     printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
@@ -192,10 +191,10 @@ void board_flag (board_t* board, const int r, const int c) {
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(r+97), c);
-  } else if (board->visible[r][c] <= 9) {
+  } else if (board->visible[r][c] <= 9 || board->visible[r][c] == '_') {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
-    board->visible[r][c] = '_';
+    board->visible[r][c] = '0';
     board->minesLeft--;
   } else {
     board->visible[r][c] = 'f';
@@ -207,7 +206,17 @@ void board_flag (board_t* board, const int r, const int c) {
 int
 boardWon(board_t* board) {
   if (board->squaresLeft == 0) {
-    printHidden(board);
+    green();
+    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    reset();
+    printHidden(board,1);
+    green();
+    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    reset();
     return 1;
   } else {
     return 0;
@@ -257,7 +266,7 @@ void board_print (board_t* board) {
     printf("\n");
   }
 #ifdef DEBUG
-  printHidden(board);
+  printHidden(board,0);
 #endif
 }
 
@@ -279,11 +288,20 @@ getColor(const int i) {
     case 4:
       blue();
       break;
+    case 5:
+      blue();
+      break;   
+    case 6:
+      blue();
+      break;
+    case 7:
+      blue();
+      break;
   }
 }
 
 static void
-printHidden(board_t* board) {
+printHidden(board_t* board, const int status) {
   #ifdef DEBUG
   printf("******     hidden        *******\n");
   #endif
@@ -292,7 +310,11 @@ printHidden(board_t* board) {
   }
   int rows = board->r;
   int cols = board->c;
-  printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
+  if (status == 1) {
+    printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ',0);
+  } else {
+    printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
+  }
   printf("\n   ");
   for (int j = 0; j < cols; j++) {
     printf(" %02d ",j);
@@ -303,13 +325,23 @@ printHidden(board_t* board) {
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
       if (ch == 'X') {
-        yellow();
-        printf("[");
-        red();
-        printf("%c",ch);
-        yellow();
-        printf("] ");
-        reset();
+        if (status == 0) {
+          yellow();
+          printf("[");
+          red();
+          printf("%c",ch);
+          yellow();
+          printf("] ");
+          reset();
+        } else {
+          red();
+          printf("[");
+          yellow();
+          printf("f");
+          red();
+          printf("] ");
+          reset();
+        }
       // } else if (ch == 0) {
       //   printf("[ ] ");
       } else if (ch == '#') {
@@ -346,6 +378,15 @@ board_delete (board_t* board) {
   free(board->hidden);
   free(board);
 }
+
+/*        color definitions            */
+static void reset(void){printf("\033[0;0m");}
+static void red(void){printf("\033[0;31m");}
+static void green(void){printf("\033[0;32m");}
+static void yellow(void){printf("\033[0;33m");}
+static void blue(void){printf("\033[0;34m");}
+static void purple(void){printf("\033[0;35m");}
+static void cyan(void){printf("\033[0;36m");}
 
 #ifdef UNIT_TEST
 
