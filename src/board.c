@@ -34,7 +34,6 @@ static void blue(void);
 static void purple(void);
 static void cyan(void);
 
-
 /*         board_create        */
 board_t*
 board_new (const int rows, const int cols, const int numMines) {
