@@ -3,6 +3,7 @@
 
 all:
 	make -C src
+	make rpi -C src
 
 clean:
 	rm -f *~
