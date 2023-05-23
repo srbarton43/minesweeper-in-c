@@ -11,21 +11,21 @@ MAKE = make
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 
 #                 Targets                #
-MACTARGET=../build/Mach-O/minesweeper
+NATIVETARGET=../build/native/minesweeper
 RPITARGET=../build/ARM-aarch64/minesweeper
 
 ARGS = 
 
 .PHONY: all clean test valgrind debug unittest
 
-all: $(MACTARGET) $(RPITARGET) 
+all: $(NATIVETARGET) $(RPITARGET) 
  
 
 # **************************************************** #
-#                    Mac Target                        #
+#                  Native Target                       #
 # **************************************************** #
 CC = gcc
-ODIR = ../build/Mach-O/obj
+ODIR = ../build/native/obj
 _OBJ = minesweeper.o board.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
@@ -33,7 +33,7 @@ $(ODIR)/%.o: %.c
 	$(shell mkdir -p $(ODIR))
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(MACTARGET): $(OBJ) $(LLIBS)
+$(NATIVETARGET): $(OBJ) $(LLIBS)
 	$(CC) $(CFLAGS) $(OBJ) $(LLIBS) -o $@
 
 # object files depend on include files
