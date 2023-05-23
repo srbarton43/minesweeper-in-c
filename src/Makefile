@@ -1,61 +1,82 @@
-# Makefile for the crawler program
-#
-# David Kotz - April 2017, 2019, 2021
-OBJS = minesweeper.o board.o
-RPIOBJS= minesweeper-rpi.o board-rpi.o
+# Makefile for minesweeper in c
 
 C = 
 L = 
 LIBS =
 LLIBS = 
 
-CC = gcc
 #LOGGING = -DAPPTEST
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(LOGGING) -I$L -I$C
 MAKE = make
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 
-RPICC = aarch64-linux-gnu-gcc
+#                 Targets                #
+MACTARGET=../build/Mach-O/minesweeper
+RPITARGET=../build/ARM-aarch64/minesweeper
 
 ARGS = 
 
 .PHONY: all clean test valgrind debug unittest
 
-all: minesweeper minesweeper-rpi
+all: $(MACTARGET) $(RPITARGET) 
+ 
 
-rpi: minesweeper-rpi $(RPIOBJS)
+# **************************************************** #
+#                    Mac Target                        #
+# **************************************************** #
+CC = gcc
+ODIR = ../build/Mach-O/obj
+_OBJ = minesweeper.o board.o
+OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-minesweeper: $(OBJS) $(LLIBS)
-	$(CC) $(CFLAGS) $(OBJS) $(LLIBS) -o $@
+$(ODIR)/%.o: %.c
+	$(shell mkdir -p $(ODIR))
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-board.o: board.h
+$(MACTARGET): $(OBJ) $(LLIBS)
+	$(CC) $(CFLAGS) $(OBJ) $(LLIBS) -o $@
 
-debug: board.c minesweeper.o
-	$(CC) $(CFLAGS) -DDEBUG minesweeper.o board.c $(LLIBS) -o minesweeper
-
-unittest: board.c
-	$(CC) $(CFLAGS) -DDEBUG -DUNIT_TEST board.c -o $@
 # object files depend on include files
 
-	
-# for rpi
-minesweeper-rpi: $(RPIOBJS) $(LLIBS)
-	$(RPICC) $(CFLAGS) $(RPIOBJS) $(LLIBS) -o $@
+# **************************************************** #
+#                Raspberry Pi Target                   #
+# **************************************************** #
+RPICC = aarch64-linux-gnu-gcc
+RODIR=../build/ARM-aarch64/obj
+_ROBJ = board.o minesweeper.o
+ROBJ = $(patsubst %,$(RODIR)/%,$(_ROBJ))
 
-minesweeper-rpi.o: minesweeper.c
-	$(RPICC) $(CFLAGS)  -c -o $@ $<
-board-rpi.o: board.c
-	$(RPICC) $(CFLAGS) -c -o $@ $<
+$(RODIR)/%.o: %.c
+	$(shell mkdir -p $(RODIR))
+	$(RPICC) -c -o $@ $< $(CFLAGS) 
+
+$(RPITARGET): $(ROBJ)
+	$(RPICC) -o $@ $^ $(CFLAGS)
+
+# **************************************************** #
+#                 Testing & Debugging                  #
+# **************************************************** #
+TESTDIR=../tests
+
+debug: board.c $(TESTDIR)/minesweeper.o
+	$(CC) $(CFLAGS) -DDEBUG $(TESTDIR)/minesweeper.o board.c $(LLIBS) -o $(TESTDIR)/minesweeper
+
+$(TESTDIR)/minesweeper.o: minesweeper.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+unittest: board.c
+	$(CC) $(CFLAGS) -DDEBUG -DUNIT_TEST board.c -o $(TESTDIR)/$@
 
 test:
+	make unittest
 	make debug
-	./testing.sh
 
 valgrind:
 	$(VALGRIND) ./testing.sh
 
 clean:
 	rm -f minesweeper
+	rm -f minesweeper-rpi
 	rm -f unittest
 	rm -f *~ *.o
 	rm -rf *.dSYM

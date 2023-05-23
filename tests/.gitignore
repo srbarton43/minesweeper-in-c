@@ -23,5 +23,5 @@ Icon?
 .Trashes
 
 ###########################################################################
-build
-minesweeper.c
+unittest
+minesweeper

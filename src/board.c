@@ -76,7 +76,7 @@ board_new (const int rows, const int cols, const int numMines) {
 void 
 board_click (board_t* board, const int r, const int c) {
   #ifdef DEBUG
-  printf("Clicking board at (%d,%d) ***********************\n",r,c);
+  printf("\nClicking board at (%d,%d) ***********************\n",r,c);
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(97+r), c);
@@ -188,7 +188,7 @@ getNeighbors(board_t* board, int r, int c) {
 /*     board_flag      */
 void board_flag (board_t* board, const int r, const int c) {
   #ifdef DEBUG
-    printf ("Flagging square (%d,%d)   *****************************\n", r, c);
+    printf ("\nFlagging square (%d,%d)   *****************************\n", r, c);
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(r+97), c);
@@ -232,7 +232,7 @@ void board_print (board_t* board) {
   int rows = board->r;
   int cols = board->c;
   #ifdef DEBUG
-  printf("*******     visible      *******\n");
+  printf("\n*******     visible      *******\n");
   #endif
   printf("\n%*c Mines Left: |%d|",board->c*4-14, ' ', board->minesLeft);
   printf("\n   ");
@@ -304,7 +304,7 @@ getColor(const int i) {
 static void
 printHidden(board_t* board, const int status) {
   #ifdef DEBUG
-  printf("******     hidden        *******\n");
+  printf("\n******     hidden        *******\n");
   #endif
   if (board == NULL) {
     printf("invalid board");
