@@ -2,10 +2,10 @@
 .phony = make all clean
 
 all:
-	make -C src
+	make -C minesweeper
 
 test:
-	make -C src test
+	make -C minesweeper test
 	tests/testing.sh
 
 unittest:
@@ -13,6 +13,6 @@ unittest:
 
 clean:
 	rm -f *~
-	make -C src clean
+	make -C minesweeper clean
 	rm -rf build
 	rm -rf tests/minesweeper* tests/unittest*
