@@ -79,9 +79,9 @@ board_click (board_t* board, const int r, const int c) {
   printf("\nClicking board at (%d,%d) ***********************\n",r,c);
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
-    printf("row %c, col %d is not within the board boundaries\n", (char)(97+r), c);
+    printf("row %c, col %d is not within the board boundaries\n", (char)(65+r), c);
   } else if (board->visible[r][c] != '0') {
-    printf("Cannot click at (%c,%d)!\n",(char)(97+r),c);
+    printf("Cannot click at (%c,%d)!\n",(char)(65+r),c);
   } else if (board->hidden[r][c] == 'X') {
     board->hidden[r][c]='#';
     red();
@@ -191,7 +191,7 @@ void board_flag (board_t* board, const int r, const int c) {
     printf ("\nFlagging square (%d,%d)   *****************************\n", r, c);
   #endif
   if (board == NULL || r < 0 || r > board->r || c < 0 || c > board->c) {
-    printf("row %c, col %d is not within the board boundaries\n", (char)(r+97), c);
+    printf("row %c, col %d is not within the board boundaries\n", (char)(r+65), c);
   } else if (board->visible[r][c] <= 9 || board->visible[r][c] == '_') {
     printf("Cannot flag an empty square\n");
   } else if (board->visible[r][c] == 'f') {
@@ -241,7 +241,7 @@ void board_print (board_t* board) {
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {
-    printf("%c  ",(char)(r+97));
+    printf("%c  ",(char)(r+65));
     for (int c = 0; c < cols; c++) {
       char ch = board->visible[r][c];
       if (ch == 'f') {
@@ -286,16 +286,7 @@ getColor(const int i) {
     case 3:
       purple();
       break;
-    case 4:
-      blue();
-      break;
-    case 5:
-      blue();
-      break;   
-    case 6:
-      blue();
-      break;
-    case 7:
+    default:
       blue();
       break;
   }
@@ -322,7 +313,7 @@ printHidden(board_t* board, const int status) {
   }
   printf("\n");
   for (int r = 0; r < rows; r++) {
-    printf("%c  ",(char)(r+97));
+    printf("%c  ",(char)(r+65));
     for (int c = 0; c < cols; c++) {
       int ch = board->hidden[r][c];
       if (ch == 'X') {
