@@ -273,7 +273,7 @@ void board_print (board_t* board) {
 
 static void 
 getColor(const int i) {
-  switch(i) {
+  switch (i) {
     case 0:
       reset();
       break;

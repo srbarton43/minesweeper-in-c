@@ -10,9 +10,11 @@
 
 static void parseArgs(const int argc, char* argv[], int* difficulty);
 static int gameLoop(board_t* board);
+static int handleInput(int mode, char* input, board_t* board);
 static char* getModeString(int mode);
 
-enum modes {MANUAL, AUTO} mode;
+static enum modes {MANUAL, AUTO} mode;
+static int MAX_QUERY_LENGTH = 5;
 
 int
 main (int argc, char* argv[]) {
@@ -54,43 +56,61 @@ gameLoop(board_t* board) {
       return 0;
     }
     printf("\n%s: ",getModeString(mode));
-    char input[4];
-    char query[4];
-    if (fgets(input, 4, stdin) == NULL) {
+    char input[MAX_QUERY_LENGTH];
+    if (fgets(input, MAX_QUERY_LENGTH, stdin) == NULL) {
       break;
-    }
-    sscanf(input, "%s\n", query);
-    printf("\n%d",strlen(query));
-    char ch = '\0';
-    if (strlen(query) == 1) {
-      sscanf(query, "%c", &ch);
-      printf("%c", ch);
-      if ((char)ch == 'Q') {
-        return 0;
-      } else if ((char)ch == '/') {
-        //change mode
-      }
-    } else if (mode == MANUAL) {
-      int c = -1;
-      char r='\0', ch = '\0';
-      if(scanf(" %c",&ch)!=1) {printf("error\n");continue;};
-      if (ch == 'f') {
-        scanf(" %c%d",&r,&c);
-        board_flag(board, r-97, c);
-      } else if (ch == 'c') {
-        scanf(" %c%d",&r,&c);
-        board_click(board, r-97, c);
-      } else if (ch == 'q') {
-        board_delete(board);
-        exit(0);
-      }
-    }
-    if (input[strlen(input)-1] != '\n') {
+    }  
+    mode = handleInput(mode, input, board);
+    if (input[strlen(input)-1] != '\n') { // chop off all chars after 3 chars
       for (int ch; (ch = getchar()) != EOF && ch != '\n';)
         ;
     }
   }
   return 1;
+}
+
+static int
+handleInput (int mode, char* input, board_t* board) {
+    char query[MAX_QUERY_LENGTH]; 
+    sscanf(input, "%s\n", query);
+    printf("\n%d",(int)strlen(query));
+    char ch = '\0';
+    if (strlen(query) == 1) { 
+      sscanf(query, "%c", &ch);
+      printf("%c", ch);
+      if ((char)ch == 'Q') { // quit
+        printf("Sore Loser!\n");
+        exit(0);
+      } else if ((char)ch == '/') { // toggle mode
+        printf ("mode: %d\n", mode);
+        switch (mode) {
+          case MANUAL:
+            return AUTO;
+            break;
+          case AUTO:
+            return MANUAL;
+            break;
+          default:
+            fprintf(stderr,"wtf happened\n");
+            exit(69);
+        } 
+      } else {
+        return 1;
+      }
+    } else if (mode == MANUAL) {
+      int c = -1;
+      char r='\0', ch = '\0';
+      if(sscanf(query, " %c%c%d",&ch, &r, &c)!=3) {printf("Bad Query!\n");return mode;};
+      if (ch == 'f') {
+        board_flag(board, r-97, c);
+      } else if (ch == 'c') {
+        board_click(board, r-97, c);
+      } else {
+        printf("Invalid key: %c\n", ch);
+        return mode;
+      }
+    }
+    return mode;
 }
 
 static char*
