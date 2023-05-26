@@ -65,6 +65,21 @@ void board_click(board_t* board, const int r, const int c);
 void board_flag(board_t* board, const int r, const int c);
 
 /*
+ * board_auto
+ *
+ * game is in auto mode...flags square if hidden, clicks around if uncovered
+ * 
+ * we return:
+ *  nothing, error message on bad parameters
+ * we guarantee:
+ *  board will update with action
+ * 
+ * caller is responsible for:
+ *  passing valid params
+ */
+void board_auto(board_t* board, const int r, const int c);
+
+/*
  * boardWon
  * 
  * Checks if user has won

@@ -49,7 +49,7 @@ parseArgs (const int argc, char* argv[], int* difficulty) {
 
 static int
 gameLoop(board_t* board) {
-  mode = AUTO;
+  mode = MANUAL;
   printf("\nToggle modes with '/'...currently in MANUAL");
   while (1) {
     if(boardWon(board) == 1) {
@@ -73,16 +73,13 @@ static int
 handleInput (int mode, char* input, board_t* board) {
     char query[MAX_QUERY_LENGTH]; 
     sscanf(input, "%s\n", query);
-    printf("\n%d",(int)strlen(query));
     char ch = '\0';
     if (strlen(query) == 1) { 
       sscanf(query, "%c", &ch);
-      printf("%c", ch);
       if ((char)ch == 'Q') { // quit
-        printf("Sore Loser!\n");
+        printf("Quitter!\n");
         exit(0);
       } else if ((char)ch == '/') { // toggle mode
-        printf ("mode: %d\n", mode);
         switch (mode) {
           case MANUAL:
             return AUTO;
@@ -95,7 +92,8 @@ handleInput (int mode, char* input, board_t* board) {
             exit(69);
         } 
       } else {
-        return 1;
+        printf("Invalid key: %c\n", ch);
+        return mode;
       }
     } else if (mode == MANUAL) {
       int c = -1;
@@ -109,6 +107,11 @@ handleInput (int mode, char* input, board_t* board) {
         printf("Invalid key: %c\n", ch);
         return mode;
       }
+    } else if (mode == AUTO) {
+      int c = -1;
+      char r = '\0';
+      if(sscanf(query, " %c%d", &r, &c)!=2) {printf("Bad Query!\n");return mode;};
+      board_auto(board, r-97, c);
     }
     return mode;
 }
