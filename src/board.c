@@ -216,7 +216,7 @@ boardWon(board_t* board) {
     green();
     printf("%*c",board->c*4/2-3,' ');printf("___________");
     printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n");
     reset();
     return 1;
   } else {
