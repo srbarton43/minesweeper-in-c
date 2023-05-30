@@ -78,6 +78,7 @@ handleInput (int mode, char* input, board_t* board) {
       sscanf(query, "%c", &ch);
       if ((char)ch == 'Q') { // quit
         printf("Quitter!\n");
+        board_delete(board);
         exit(0);
       } else if ((char)ch == '/') { // toggle mode
         switch (mode) {
@@ -89,6 +90,7 @@ handleInput (int mode, char* input, board_t* board) {
             break;
           default:
             fprintf(stderr,"wtf happened\n");
+            board_delete(board);
             exit(69);
         } 
       } else {

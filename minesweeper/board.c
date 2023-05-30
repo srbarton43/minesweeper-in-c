@@ -57,6 +57,10 @@ board_new (const int rows, const int cols, const int numMines) {
   for (int i = 0; i < rows; i++) {
     b->visible[i] = malloc(cols*sizeof(char));
     b->hidden[i] = malloc(cols*sizeof(char));
+    for (int k = 0; k < rows; k++) {
+      b->visible[i][k] = '0';
+      b->hidden[i][k] = '0';
+    }
   }
   // generate mine indices
   srand(time(0));
