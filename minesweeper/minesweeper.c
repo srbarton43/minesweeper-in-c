@@ -61,7 +61,7 @@ gameLoop(board_t* board) {
       break;
     }  
     mode = handleInput(mode, input, board);
-    if (input[strlen(input)-1] != '\n') { // chop off all chars after 3 chars
+    if (input[strlen(input)-1] != '\n') { // chop off all chars after 4 chars
       for (int ch; (ch = getchar()) != EOF && ch != '\n';)
         ;
     }
