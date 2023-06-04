@@ -94,25 +94,25 @@ handleInput (int mode, char* input, board_t* board) {
             exit(69);
         } 
       } else {
-        printf("Invalid key: %c\n", ch);
+        printf("Invalid key: %c\nCan use either '/' (switch mode) or 'Q' (quit)\n", ch);
         return mode;
       }
     } else if (mode == MANUAL) {
       int c = -1;
       char r='\0', ch = '\0';
-      if(sscanf(query, " %c%c%d",&ch, &r, &c)!=3) {printf("Bad Query!\n");return mode;};
+      if(sscanf(query, " %c%c%d",&ch, &r, &c)!=3) {printf("Bad Query!\nFormat: <action><row><col>\n");return mode;};
       if (ch == 'f') {
         board_flag(board, r-97, c);
       } else if (ch == 'c') {
         board_click(board, r-97, c);
       } else {
-        printf("Invalid key: %c\n", ch);
+        printf("Invalid key: %c\nUse either 'c' (click) or 'f' (flag)\n", ch);
         return mode;
       }
     } else if (mode == AUTO) {
       int c = -1;
       char r = '\0';
-      if(sscanf(query, " %c%d", &r, &c)!=2) {printf("Bad Query!\n");return mode;};
+      if(sscanf(query, " %c%d", &r, &c)!=2) {printf("Bad Query!\nFormat: <row><col>\n");return mode;};
       board_auto(board, r-97, c);
     }
     return mode;
