@@ -112,7 +112,7 @@ handleInput (int mode, char* input, board_t* board) {
     } else if (mode == AUTO) {
       int c = -1;
       char r = '\0';
-      if(sscanf(query, " %c%d", &r, &c)!=2) {printf("Bad Query!\nFormat: <row><col>\n");return mode;};
+      if (sscanf(query, " %c%d", &r, &c)!=2 || r < 97) {printf("Bad Query!\nFormat: <row><col>\n");return mode;};
       board_auto(board, r-97, c);
     }
     return mode;
