@@ -270,9 +270,9 @@ boardWon(board_t* board) {
     reset();
     printHidden(board,1);
     green();
-    printf("%*c",board->c*4/2-3,' ');printf("___________");
+    printf("%*c",board->c*4/2-3,' ');printf("__________");
     printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n");
+    printf("\n%*c",board->c*4/2-3,' ');printf("----------\n");
     reset();
     return 1;
   } else {
@@ -301,11 +301,9 @@ void board_print (board_t* board) {
     for (int c = 0; c < cols; c++) {
       char ch = board->visible[r][c];
       if (ch == 'f') {
-        red();
-        printf("[");
         yellow();
+        printf("[");
         printf("%c",ch);
-        red();
         printf("] ");
         reset();
       } else if (board->visible[r][c] == '_') {
@@ -394,11 +392,11 @@ printHidden(board_t* board, const int status) {
       //   printf("[ ] ");
       } else if (ch == '#') {
         red();
-        printf("[");
+        printf("{");
         yellow();
         printf("#");
         red();
-        printf("] ");
+        printf("} ");
         reset();
       } else if (ch == 0) {
         printf(" _  ");
