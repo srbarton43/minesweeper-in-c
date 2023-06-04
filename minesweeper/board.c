@@ -9,17 +9,21 @@
 
 #include "board.h"
 #include <time.h>
+#include <stdbool.h>
+
 
 typedef struct board {
   int r,c;
   int minesLeft,squaresLeft;
   char** visible;
   char** hidden;
+  bool empty;
 } board_t;
 
 /*      static function prototypes             */
 static void writeBoard(board_t* board);
 static char getNeighbors(board_t* board, const int r, const int c);
+static void firstClick(board_t* board, const int r, const int c);
 static void zerosLogic(board_t* board, const int r, const int c);
 static int touchingZero(board_t* board, const int r, const int c);
 static void printHidden(board_t* board, const int status);
@@ -62,26 +66,7 @@ board_new (const int rows, const int cols, const int numMines) {
       b->hidden[i][k] = '0';
     }
   }
-  // generate mine indices
-  srand(time(0));
-  int indices[numMines];
-  for (int i = 0; i < numMines;) {
-    int index = (rand() % (rows*cols)) + 1;
-    for (int j = i; j >= 0; j--) {
-      if (indices[j] == index-1) { // already mine on index
-        goto skipped;
-      }
-    }
-    indices[i] = index-1;
-    i++;
-    skipped:;
-  }
-  
-  // plant mines
-  for (int i = 0; i < numMines; i++) {
-    b->hidden[(indices[i])/cols][-1*(indices[i]/cols)*cols+indices[i]] = 'X';
-  }
-  writeBoard(b);
+  b->empty = true;
   return b;
 }
 
@@ -95,6 +80,9 @@ board_click (board_t* board, const int r, const int c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(65+r), c);
   } else if (board->visible[r][c] != '0') {
     printf("Cannot click at (%c,%d)!\n",(char)(65+r),c);
+  } else if (board->empty) {
+    board->empty = false;
+    firstClick(board, r, c);
   } else if (board->hidden[r][c] == 'X') {
     board->hidden[r][c]='#';
     red();
@@ -117,6 +105,38 @@ board_click (board_t* board, const int r, const int c) {
     board->squaresLeft--;
     board_print(board);
   }
+}
+
+// first click on empty board
+// must generate mines after the click
+// assumes that clicked tile is valid since already checked in board_click
+static void
+firstClick(board_t* board, const int r, const int c) {
+  // generate mine indices
+  int clickIndex = r*board->c + c;
+  srand(time(0));
+  int indices[board->minesLeft];
+  for (int i = 0; i < board->minesLeft;) {
+    int index = (rand() % (board->r*board->c)) + 1;
+    if (index == clickIndex) {
+      goto skipped; // cant be a mine on first click
+    }
+    for (int j = i; j >= 0; j--) {
+      if (indices[j] == index-1) { // already mine on index
+        goto skipped;
+      }
+    }
+    indices[i] = index-1;
+    i++;
+    skipped:;
+  }
+  
+  // plant mines
+  for (int i = 0; i < board->minesLeft; i++) {
+    board->hidden[(indices[i])/board->c][-1*(indices[i]/board->c)*board->c+indices[i]] = 'X';
+  }
+  writeBoard(board);
+  board_click(board, r, c);
 }
 
 // recursive check to clear zero-neighboring tiles
@@ -200,7 +220,6 @@ writeBoard(board_t* board) {
       if (board->hidden[r][c] != 'X') {
         board->hidden[r][c] = getNeighbors(board, r, c);
       }
-      board->visible[r][c] = '0';
     }
   }
 }

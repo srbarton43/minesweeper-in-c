@@ -18,7 +18,7 @@ enum DIFFICULTY{BEGINNER=1, INTERMEDIATE=2, EXPERT=3};
 /*
  * board_new
  *
- * create a new board with random mines
+ * create a new empty board 
  *
  * we return:
  *  pointer to new board type
@@ -36,6 +36,7 @@ board_t* board_new(const int r, const int c, const int numMines);
  * board_click
  *
  * user clicks a square - determine the action
+ *  on first click: generates mines for the empty board
  *
  * we return:
  *  nothing, error message on bad parameters
