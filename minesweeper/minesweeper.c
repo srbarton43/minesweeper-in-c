@@ -27,6 +27,8 @@ main (int argc, char* argv[]) {
     board = board_new(16, 16, 40);
   } else if (difficulty == EXPERT) {
     board = board_new(16, 30, 99);
+  } else if (difficulty == 99) {
+    board = board_new(5, 5, 15);
   }
   board_print(board);
   gameLoop(board);
@@ -41,7 +43,7 @@ parseArgs (const int argc, char* argv[], int* difficulty) {
     exit(1);
   }
   *difficulty = atoi(argv[1]);
-  if (*difficulty <= 0||*difficulty>3) {
+  if (*difficulty <= 0||(*difficulty>3 && *difficulty != 99)) {
     printf("usage: %s difficulty=1,2,3\n",argv[0]);
     exit(1);
   } 

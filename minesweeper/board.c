@@ -8,6 +8,7 @@
  */
 
 #include "board.h"
+#include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
 
@@ -113,16 +114,29 @@ board_click (board_t* board, const int r, const int c) {
 static void
 firstClick(board_t* board, const int r, const int c) {
   // generate mine indices
-  int clickIndex = r*board->c + c;
+  int clickIndex = r*board->c + c + 1;
+#ifdef DEBUG
+  printf("####### MINE GEN DEBUG #######\n");
+  printf("first click index: %d\n", clickIndex);
+#endif
   srand(time(0));
   int indices[board->minesLeft];
   for (int i = 0; i < board->minesLeft;) {
     int index = (rand() % (board->r*board->c)) + 1;
+#ifdef DEBUG
+    printf("mine index: %d\n", index);
+#endif
     if (index == clickIndex) {
+#ifdef DEBUG
+      printf("skipped CI=%d, I=%d\n",clickIndex, index);
+#endif
       goto skipped; // cant be a mine on first click
     }
     for (int j = i; j >= 0; j--) {
       if (indices[j] == index-1) { // already mine on index
+#ifdef DEBUG
+        printf("skipping index %d\n", index);
+#endif
         goto skipped;
       }
     }
