@@ -9,9 +9,17 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // board typedef
-typedef struct board board_t;
+typedef struct board 
+{
+  int r,c;
+  int minesLeft,squaresLeft;
+  char** visible;
+  char** hidden;
+  bool empty;
+} board_t;
 
 enum DIFFICULTY{BEGINNER=1, INTERMEDIATE=2, EXPERT=3};
 
@@ -90,6 +98,16 @@ void board_auto(board_t* board, const int r, const int c);
  *  0 if not
  */
 int boardWon(board_t* board);
+
+/*
+ * board_to_string
+ * formats board into a string for ncurses
+ *
+ * we return:
+ *  nothing
+ * 
+ */
+void board_to_string(board_t* board, char* string);
 /*
  * board_print
  *

@@ -11,15 +11,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
+#include <string.h>
 
-
-typedef struct board {
-  int r,c;
-  int minesLeft,squaresLeft;
-  char** visible;
-  char** hidden;
-  bool empty;
-} board_t;
 
 /*      static function prototypes             */
 static void writeBoard(board_t* board);
@@ -100,11 +93,9 @@ board_click (board_t* board, const int r, const int c) {
     exit(0);
   } else if (board->hidden[r][c] == 0) {
       zerosLogic(board, r,c);
-      board_print(board);
   } else {
     board->visible[r][c] = board->hidden[r][c];
     board->squaresLeft--;
-    board_print(board);
   }
 }
 
@@ -294,10 +285,42 @@ boardWon(board_t* board) {
   }
 }
 
+/*   board_to_string   */
+void board_to_string(board_t* board, char* string) {
+  if (board == NULL || string == NULL) {
+    return;
+  }
+  int rows = board->r;
+  int cols = board->c;
+  sprintf(string, "");
+
+  for (int r = 0; r < rows; r++) {
+    char rowNO[10];
+    sprintf(rowNO, "[%d] ", r);
+    strcat(string, rowNO);
+    for (int c = 0; c < cols; c++) {
+      char ch = board->visible[r][c];
+      char temp[10];
+      if (ch == 'f') {
+        sprintf(temp, "[%c] ", ch);
+      } else if (ch == '_') {
+        sprintf(temp, " _  ");
+      } else if (ch > 9) {
+        sprintf(temp, "[%c] ", ch);
+      } else {
+        sprintf(temp, "[%d] ", ch);
+      }
+      strcat(string, temp);
+    }
+    strcat(string, "\n");
+  }
+}
+
 /*    board_print     */
 void board_print (board_t* board) {
   if (board == NULL) {
     printf("invalid board");
+    return;
   }
   int rows = board->r;
   int cols = board->c;
