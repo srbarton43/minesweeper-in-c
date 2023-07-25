@@ -52,15 +52,12 @@ parseArgs (const int argc, char* argv[], int* difficulty) {
 static int
 gameLoop(board_t* board) {
   mode = MANUAL;
-  char string[500];
   printf("\nToggle modes with '/'...currently in MANUAL");
   while (1) {
     if(boardWon(board) == 1) {
       return 0;
     }
     printf("\n%s: ",getModeString(mode));
-    board_to_string(board, string);
-    printf("\n%s", string);
     char input[MAX_QUERY_LENGTH];
     if (fgets(input, MAX_QUERY_LENGTH, stdin) == NULL) {
       break;

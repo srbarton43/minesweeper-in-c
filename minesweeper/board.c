@@ -41,6 +41,15 @@ static void blue(void);
 static void purple(void);
 static void cyan(void);
 
+/*     board_t typedef    */
+typedef struct board {
+  int r, c;
+  int minesLeft, squaresLeft;
+  char** visible;
+  char** hidden;
+  bool empty;
+} board_t;
+
 
 /*         board_create        */
 board_t*
@@ -261,7 +270,7 @@ void board_flag (board_t* board, const int r, const int c) {
     board->visible[r][c] = 'f';
     board->minesLeft--;
   }
-  board_print(board);
+  // board_print(board);
 }
 
 /*      boardWon     */
@@ -285,34 +294,22 @@ boardWon(board_t* board) {
   }
 }
 
-/*   board_to_string   */
-void board_to_string(board_t* board, char* string) {
-  if (board == NULL || string == NULL) {
-    return;
-  }
-  int rows = board->r;
-  int cols = board->c;
-  sprintf(string, "");
-
-  for (int r = 0; r < rows; r++) {
-    char rowNO[10];
-    sprintf(rowNO, "[%d] ", r);
-    strcat(string, rowNO);
-    for (int c = 0; c < cols; c++) {
-      char ch = board->visible[r][c];
-      char temp[10];
-      if (ch == 'f') {
-        sprintf(temp, "[%c] ", ch);
-      } else if (ch == '_') {
-        sprintf(temp, " _  ");
-      } else if (ch > 9) {
-        sprintf(temp, "[%c] ", ch);
-      } else {
-        sprintf(temp, "[%d] ", ch);
+/*    board_iterate    */
+void 
+board_iterate (board_t* board, void* arg, 
+      void (*visibleFunc)(void* arg, char c),
+      void (*hiddenFunc)(void* arg, char c),
+      void (*nextRowFunc)(void* arg)) {
+  for (int r = 0; r < board->r; r++) {
+    for (int c = 0; c < board->c; c++) {
+      if (visibleFunc != NULL) {
+        (*visibleFunc)(arg, board->visible[r][c]);
       }
-      strcat(string, temp);
+      if (hiddenFunc != NULL) {
+        (*hiddenFunc)(arg, board->hidden[r][c]);
+      }
     }
-    strcat(string, "\n");
+    (*nextRowFunc)(arg);
   }
 }
 

@@ -9,17 +9,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 // board typedef
-typedef struct board 
-{
-  int r,c;
-  int minesLeft,squaresLeft;
-  char** visible;
-  char** hidden;
-  bool empty;
-} board_t;
+typedef struct board board_t;
 
 enum DIFFICULTY{BEGINNER=1, INTERMEDIATE=2, EXPERT=3};
 
@@ -100,14 +92,21 @@ void board_auto(board_t* board, const int r, const int c);
 int boardWon(board_t* board);
 
 /*
- * board_to_string
- * formats board into a string for ncurses
+ * board_iterate
+ *
+ * iterate through each cell in a board struct
+ *  offers public and private helper func option
  *
  * we return:
  *  nothing
- * 
+ *
+ * caller is responsible for:
+ *  passing valid parameters or NULL func if NA
  */
-void board_to_string(board_t* board, char* string);
+void board_iterate(board_t* board, void* arg, 
+    void (*visibleFunc)(void* arg, char c), 
+    void (*hiddenFunc)(void* arg, char c),
+    void (*nextRowFunc)(void* arg));
 /*
  * board_print
  *
