@@ -88,6 +88,10 @@ handleInput(board_t* board, char* status, coords_t* pos) {
       board_flag(board, pos->y, (pos->x)/4);
       r=1;
       break;
+    case ' ':
+      board_auto(board, pos->y, (pos->x)/4);
+      r = 1;
+      break;
     case 'Q':
       endwin();
       board_print(board);
