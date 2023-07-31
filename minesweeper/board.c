@@ -74,7 +74,7 @@ board_new (const int rows, const int cols, const int numMines) {
 }
 
 /*       board_click      */
-void 
+int 
 board_click (board_t* board, const int r, const int c) {
   #ifdef DEBUG
   printf("\nClicking board at (%d,%d) ***********************\n",r,c);
@@ -88,24 +88,26 @@ board_click (board_t* board, const int r, const int c) {
     firstClick(board, r, c);
   } else if (board->hidden[r][c] == 'X') {
     board->hidden[r][c]='#';
-    red();
-    printf("%*c",board->c*4/2-3,' ');printf("___________");
-    printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
-    reset();
-    printHidden(board,0);
-    red();
-    printf("\n%*c",board->c*4/2-3,' ');printf("___________");
-    printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n"); 
-    reset();
-    exit(0);
+    return 1;
+    // red();
+    // printf("%*c",board->c*4/2-3,' ');printf("___________");
+    // printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
+    // printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    // reset();
+    // printHidden(board,0);
+    // red();
+    // printf("\n%*c",board->c*4/2-3,' ');printf("___________");
+    // printf("\n%*c|*Game Over*|",board->c*4/2-4,' ');
+    // printf("\n%*c",board->c*4/2-3,' ');printf("-----------\n"); 
+    // reset();
+    // exit(0);
   } else if (board->hidden[r][c] == 0) {
       zerosLogic(board, r,c);
   } else {
     board->visible[r][c] = board->hidden[r][c];
     board->squaresLeft--;
   }
+  return 0;
 }
 
 // first click on empty board
@@ -191,12 +193,13 @@ recurseZeroes(void* arg, board_t* board, const int r, const int c) {
   }    
 }
 
-void board_auto(board_t* board, const int r, const int c) {
+int board_auto(board_t* board, const int r, const int c) {
   #ifdef DEBUG
   printf("\nAuto-Clicking board at (%d,%d) ***********************\n",r,c);
   #endif
   if (board == NULL || r < 0 || r >= board->r || c < 0 || c > board->c) {
     printf("row %c, col %d is not within the board boundaries\n", (char)(65+r), c);
+    return 1;
   }
   if (board->visible[r][c] == '0' || board->visible[r][c] == 'f') {
     board_flag(board, r, c);
@@ -209,6 +212,7 @@ void board_auto(board_t* board, const int r, const int c) {
       board_print(board);
     }
   }
+  return 0;
 }
 
 // iteratorfunc to get flag count

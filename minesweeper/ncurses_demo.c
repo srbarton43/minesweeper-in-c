@@ -14,7 +14,6 @@ static void handleInput(board_t* board, char* status, coords_t* pos);
 static void updateDisplay(board_t* board, const char* status, const char* map, const coords_t* pos);
 static void write_board(board_t* board, const coords_t* curPos);
 static void colorNumber(coords_t* pos, char c);
-
 static void print_tile(void* arg, char c);
 static void nextRow(void* arg);
 
@@ -87,7 +86,13 @@ handleInput(board_t* board, char* status, coords_t* pos) {
       }
       break;
     case 'x':
-      board_click(board, pos->y, (pos->x)/4);
+      if (board_click(board, pos->y, (pos->x)/4)) {
+        endwin();
+        board_delete(board);
+        free(pos);
+        printf("You Lose\n");
+        exit(0);
+      }
       r = 1;
       break;
     case 'f':
@@ -165,9 +170,11 @@ print_tile(void* arg, char c) {
       // pos->x-=2;
     } else {
       sprintf(temp, "[%d] ", c);
-      mvprintw(pos->y, pos->x, "[");
       colorNumber(pos, c);
-      mvprintw(pos->y, pos->x+2, "] ");
+      // Old Vers
+      // mvprintw(pos->y, pos->x, "[");
+      // colorNumber(pos, c);
+      // mvprintw(pos->y, pos->x+2, "] ");
     }
   }
   pos->x+=4;
@@ -194,8 +201,8 @@ colorNumber(coords_t* pos, char c) {
     attron(COLOR_PAIR(6));
   }
   char temp[5];
-  sprintf(temp, "%d", c);
-  mvprintw(pos->y, pos->x+1, temp);
+  sprintf(temp, "[%d]", c);
+  mvprintw(pos->y, pos->x, temp);
   attron(COLOR_PAIR(1));
 }
 

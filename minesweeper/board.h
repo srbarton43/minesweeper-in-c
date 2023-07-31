@@ -47,7 +47,7 @@ board_t* board_new(const int r, const int c, const int numMines);
  *  passing valid parameters
  *
  */
-void board_click(board_t* board, const int r, const int c);
+int board_click(board_t* board, const int r, const int c);
 
 
 /*
@@ -78,7 +78,7 @@ void board_flag(board_t* board, const int r, const int c);
  * caller is responsible for:
  *  passing valid params
  */
-void board_auto(board_t* board, const int r, const int c);
+int board_auto(board_t* board, const int r, const int c);
 
 /*
  * boardWon
