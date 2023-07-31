@@ -281,17 +281,17 @@ void board_flag (board_t* board, const int r, const int c) {
 int
 boardWon(board_t* board) {
   if (board->squaresLeft == 0) {
-    green();
-    printf("%*c",board->c*4/2-3,' ');printf("___________");
-    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
-    reset();
-    printHidden(board,1);
-    green();
-    printf("%*c",board->c*4/2-3,' ');printf("__________");
-    printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
-    printf("\n%*c",board->c*4/2-3,' ');printf("----------\n");
-    reset();
+    // green();
+    // printf("%*c",board->c*4/2-3,' ');printf("___________");
+    // printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    // printf("\n%*c",board->c*4/2-3,' ');printf("-----------");
+    // reset();
+    // printHidden(board,1);
+    // green();
+    // printf("%*c",board->c*4/2-3,' ');printf("__________");
+    // printf("\n%*c|*You Won!*|",board->c*4/2-4,' ');
+    // printf("\n%*c",board->c*4/2-3,' ');printf("----------\n");
+    // reset();
     return 1;
   } else {
     return 0;
@@ -305,6 +305,7 @@ board_iterate (board_t* board, void* arg,
       void (*hiddenFunc)(void* arg, char c),
       void (*nextRowFunc)(void* arg)) {
   for (int r = 0; r < board->r; r++) {
+    (*nextRowFunc)(arg);
     for (int c = 0; c < board->c; c++) {
       if (visibleFunc != NULL) {
         (*visibleFunc)(arg, board->visible[r][c]);
@@ -313,7 +314,6 @@ board_iterate (board_t* board, void* arg,
         (*hiddenFunc)(arg, board->hidden[r][c]);
       }
     }
-    (*nextRowFunc)(arg);
   }
 }
 
