@@ -61,16 +61,24 @@ handleInput(board_t* board, char* status, coords_t* pos) {
   int r = 0;
   switch (c) {
     case 'h':
-      pos->x-=4;
+      if (pos->x > 0) {
+        pos->x-=4;
+      }
       break;
     case 'l':
-      pos->x+=4;
+      if (pos->x < 8*4) {
+        pos->x+=4;
+      }
       break;
     case 'j':
-      pos->y++;
+      if (pos->y < 8) {
+        pos->y++;
+      }
       break;
     case 'k':
-      pos->y--;
+      if (pos->y > 0) {
+        pos->y--;
+      }
       break;
     case 'x':
       board_click(board, pos->y, (pos->x)/4);
