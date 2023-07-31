@@ -33,6 +33,12 @@ int main(int argc, char* argv[]) {
   while (true) {
     updateDisplay(board, status, str, pos);
     handleInput(board, status, pos);
+    if (boardWon(board)) {
+      endwin();
+      board_delete(board);
+      printf("You Won!!\n");
+      exit(0);
+    }
   }
   free(pos);
 }
